@@ -1,0 +1,11 @@
+[build]
+  command = "pip install -e ."
+  publish = "public"
+  functions = "netlify/functions"
+
+[dev]
+  framework = "python"
+  
+[functions]
+  directory = "netlify/functions"
+  external_node_modules = ["@netlify/functions"]
