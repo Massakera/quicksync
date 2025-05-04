@@ -2,17 +2,17 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install uv
 RUN pip install uv
 
-# Copy the project files
-COPY . .
+COPY pyproject.toml .
+COPY README.md .
+COPY quicksync ./quicksync
 
-# Install dependencies using uv
-RUN uv pip install -e .
+RUN uv pip install .
 
-# Expose the port
 EXPOSE 8000
 
-# Start the server
-CMD ["uvicorn", "quicksync.src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8000/ || exit 1
+
+CMD uvicorn quicksync.src.main:app --host 0.0.0.0 --port ${PORT:-8000}

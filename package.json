@@ -6,14 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "mailchimp",
-    "contacts",
-    "sync"
-  ],
   "author": "Enzo Massaki Ito",
   "license": "MIT",
   "dependencies": {
-    "@netlify/functions": "^2.0.0"
+    "@fastify/aws-lambda": "^3.3.0"
   }
 }

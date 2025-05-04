@@ -32,7 +32,7 @@ MAILCHIMP_API_KEY=your_mailchimp_api_key
 MAILCHIMP_SERVER_PREFIX=your_mailchimp_server_prefix
 ```
 
-## Usage
+## Local Usage
 
 Start the server:
 
