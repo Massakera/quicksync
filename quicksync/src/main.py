@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from mangum import Mangum
 
 from .api.router import router as contacts_router
 
@@ -30,3 +31,5 @@ async def root():
         "docs": "/docs",
         "sync_endpoint": "/contacts/sync"
     }
+
+handler = Mangum(app)

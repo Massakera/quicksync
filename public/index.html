@@ -1,87 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickSync</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 600px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #0056b3; }
+        button { 
+            padding: 12px 20px; 
+            font-size: 1em; 
+            cursor: pointer; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            transition: background-color 0.3s ease;
         }
-        h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-        }
-        .result {
-            margin-top: 20px;
-            display: none;
-        }
-        .loading {
-            display: none;
-            margin-top: 20px;
-        }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        #status { margin-top: 20px; font-weight: bold; padding: 10px; border-radius: 5px; }
+        .status-success { color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .status-error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        .status-info { color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb; }
     </style>
 </head>
 <body>
-    <h1>QuickSync</h1>
-    <p>A tool that syncs contacts from MockAPI to Mailchimp.</p>
-    
-    <button id="syncButton">Sync Contacts</button>
-    
-    <div id="loading" class="loading">
-        <p>Syncing contacts, please wait...</p>
-    </div>
-    
-    <div id="result" class="result">
-        <h2>Sync Result</h2>
-        <pre id="resultJson"></pre>
+    <div class="container">
+        <h1>QuickSync</h1>
+        <p>Sync contacts from MockAPI to Mailchimp.</p>
+        <button id="syncButton">Sync Contacts</button>
+        <div id="status"></div>
     </div>
 
     <script>
-        document.getElementById('syncButton').addEventListener('click', async function() {
-            const loadingEl = document.getElementById('loading');
-            const resultEl = document.getElementById('result');
-            const resultJsonEl = document.getElementById('resultJson');
-            
-            loadingEl.style.display = 'block';
-            resultEl.style.display = 'none';
-            
+        const syncButton = document.getElementById('syncButton');
+        const statusDiv = document.getElementById('status');
+
+        syncButton.addEventListener('click', async () => {
+            statusDiv.textContent = 'Syncing...';
+            statusDiv.className = 'status-info'; // Reset class
+            syncButton.disabled = true;
             try {
-                const response = await fetch('/contacts/sync');
-                const data = await response.json();
+                // Use relative path for the API endpoint
+                const response = await fetch('/contacts/sync'); // This path needs to be correctly routed by Netlify
+                statusDiv.textContent = ''; // Clear status before showing result
+                statusDiv.className = ''; // Clear class
+
+                const result = await response.json(); // Try parsing JSON regardless of status
+
+                if (!response.ok) {
+                    let errorMsg = `HTTP error ${response.status}`; 
+                    if(result && result.detail) { // FastAPI often returns errors in 'detail'
+                       errorMsg = typeof result.detail === 'string' ? result.detail : JSON.stringify(result.detail);
+                    } else if (result) {
+                       errorMsg = JSON.stringify(result);
+                    }
+                    throw new Error(errorMsg);
+                }
                 
-                resultJsonEl.textContent = JSON.stringify(data, null, 2);
-                resultEl.style.display = 'block';
+                // *** Still need to fix this line based on the actual SyncResponse model ***
+                // For now, let's display the raw result
+                statusDiv.textContent = `Sync successful! Response: ${JSON.stringify(result)}`;
+                // Example if SyncResponse had { syncedContacts: number }:
+                // statusDiv.textContent = `Sync successful! Synced: ${result.syncedContacts}`; 
+                statusDiv.classList.add('status-success');
             } catch (error) {
-                resultJsonEl.textContent = `Error: ${error.message}`;
-                resultEl.style.display = 'block';
+                console.error('Sync failed:', error);
+                statusDiv.textContent = `Sync failed: ${error.message}`;
+                statusDiv.classList.add('status-error');
             } finally {
-                loadingEl.style.display = 'none';
+                syncButton.disabled = false;
             }
         });
     </script>
 </body>
-</html>
+</html> 

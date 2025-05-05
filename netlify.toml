@@ -1,18 +1,16 @@
 [build]
-  command = "pip install -e ."
+  command = "pip install -r requirements.txt"
   publish = "public"
-  functions = "netlify/functions"
 
 [build.environment]
   PYTHON_VERSION = "3.12"
 
-[[redirects]]
-  from = "/contacts/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-  force = true
+# Explicitly define the 'main' function
+[functions]
+  # Directory containing this specific function's handler file (main.py)
+  directory = "quicksync/src/"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/contacts/*"
+  to = "/.netlify/functions/main"
   status = 200

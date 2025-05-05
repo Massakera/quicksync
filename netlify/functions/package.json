@@ -1,7 +1,0 @@
-{
-  "name": "quicksync-api",
-  "version": "1.0.0",
-  "description": "Netlify Function for QuickSync",
-  "main": "api.py",
-  "type": "module"
-}

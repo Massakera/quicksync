@@ -1,4 +1,6 @@
 import os
+import logging
+
 import mailchimp_marketing as MailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
 from typing import Dict, List, Optional
@@ -40,9 +42,9 @@ class MailchimpClient:
                 try:
                     self.client.lists.delete_list(found_list_id)
                 except ApiClientError as delete_error:
-                    print(f"Failed to delete list {found_list_id}: {delete_error}")
+                    logging.warning(f"Failed to delete list {found_list_id}: {delete_error}")
         except ApiClientError as get_error:
-            print(f"Error during list check/delete phase: {get_error}. Proceeding to create.")
+            logging.warning(f"Error during list check/delete phase: {get_error}. Proceeding to create.")
             pass
 
         try:
@@ -72,7 +74,7 @@ class MailchimpClient:
             return self.list_id
         except ApiClientError as error:
             error_details = f"Status Code: {getattr(error, 'status_code', 'N/A')}, Body: {getattr(error, 'text', 'N/A')}"
-            print(f"Failed to create Mailchimp list: {error_details}")
+            logging.error(f"Failed to create Mailchimp list: {error_details}")
             raise ValueError(f"Failed to create Mailchimp list: {error_details}")
     
     async def add_members(self, contacts: List[Contact]) -> List[Dict]:
@@ -98,6 +100,6 @@ class MailchimpClient:
                 if "Member Exists" in str(error):
                     results.append({"status": "subscribed", "email_address": contact.email})
                 else:
-                    print(f"Error adding {contact.email}: {str(error)}")
+                    logging.error(f"Error adding {contact.email}: {str(error)}")
                 
         return results

@@ -49,3 +49,5 @@ coverage.xml
 *.swo
 
 requirements.txt
+# Local Netlify folder
+.netlify
