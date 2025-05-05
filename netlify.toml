@@ -1,5 +1,7 @@
 [build]
   command = "pip install ."
+  # Explicitly set publish dir to override UI, even if unused
+  publish = "."
 
 [build.environment]
   PYTHON_VERSION = "3.12"
