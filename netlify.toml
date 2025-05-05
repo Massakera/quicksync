@@ -1,16 +1,19 @@
 [build]
   command = "pip install ."
-  publish = "public"
+  # Publish the built distribution for the function to use
+  publish = "dist"
 
 [build.environment]
   PYTHON_VERSION = "3.12"
 
-# Explicitly define the 'main' function
+# Explicitly define the functions directory
 [functions]
-  # Directory containing this specific function's handler file (main.py)
-  directory = "quicksync/src/"
+  directory = "netlify/functions"
+  # Ensure the built package is included in the function bundle
+  included_files = ["dist/**"]
 
+# Redirect all traffic to the Netlify function
 [[redirects]]
-  from = "/contacts/*"
-  to = "/.netlify/functions/main"
+  from = "/*"
+  to = "/.netlify/functions/server"
   status = 200
