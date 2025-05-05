@@ -1,1 +1,0 @@
-from quicksync.src.main import handler 
