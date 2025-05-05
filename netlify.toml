@@ -1,7 +1,5 @@
 [build]
   command = "pip install ."
-  # Publish the built distribution for the function to use
-  publish = "dist"
 
 [build.environment]
   PYTHON_VERSION = "3.12"
@@ -9,8 +7,6 @@
 # Explicitly define the functions directory
 [functions]
   directory = "netlify/functions"
-  # Ensure the built package is included in the function bundle
-  included_files = ["dist/**"]
 
 # Redirect all traffic to the Netlify function
 [[redirects]]
