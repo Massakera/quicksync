@@ -28,18 +28,23 @@ class MailchimpClient:
         self.list_id = None
     
     async def get_or_create_list(self) -> str:
-        if self.list_id:
-            return self.list_id
-        
         try:
-            lists = self.client.lists.get_all_lists()
+            lists = self.client.lists.get_all_lists(fields=["lists.id", "lists.name"])
+            found_list_id = None
             for list_info in lists["lists"]:
                 if list_info["name"] == self.list_name:
-                    self.list_id = list_info["id"]
-                    return self.list_id
-        except ApiClientError:
+                    found_list_id = list_info["id"]
+                    break 
+            
+            if found_list_id:
+                try:
+                    self.client.lists.delete_list(found_list_id)
+                except ApiClientError as delete_error:
+                    print(f"Failed to delete list {found_list_id}: {delete_error}")
+        except ApiClientError as get_error:
+            print(f"Error during list check/delete phase: {get_error}. Proceeding to create.")
             pass
-        
+
         try:
             contact = {
                 "company": "QuickSync",
@@ -66,7 +71,9 @@ class MailchimpClient:
             self.list_id = list_info["id"]
             return self.list_id
         except ApiClientError as error:
-            raise ValueError(f"Failed to create Mailchimp list: {error}")
+            error_details = f"Status Code: {getattr(error, 'status_code', 'N/A')}, Body: {getattr(error, 'text', 'N/A')}"
+            print(f"Failed to create Mailchimp list: {error_details}")
+            raise ValueError(f"Failed to create Mailchimp list: {error_details}")
     
     async def add_members(self, contacts: List[Contact]) -> List[Dict]:
         if not self.list_id:
