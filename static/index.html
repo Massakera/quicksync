@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickSync</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.5;
+            color: #333;
+        }
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #e6f7e6;
+            color: #27ae60;
+        }
+        .error {
+            background-color: #faecec;
+            color: #e74c3c;
+        }
+        .loading {
+            background-color: #eef7fb;
+            color: #3498db;
+        }
+        .results {
+            margin-top: 1.5rem;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>QuickSync</h1>
+        <p>Sync contacts from MockAPI to Mailchimp</p>
+    </header>
+
+    <div class="card">
+        <h2>Sync Contacts</h2>
+        <p>Click the button below to sync contacts from MockAPI to Mailchimp.</p>
+        <button id="syncButton">Sync Contacts</button>
+        <div id="status" style="display: none;"></div>
+        <div class="results" id="results" style="display: none;">
+            <h3>Results:</h3>
+            <pre id="resultsJson"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const syncButton = document.getElementById('syncButton');
+            const status = document.getElementById('status');
+            const results = document.getElementById('results');
+            const resultsJson = document.getElementById('resultsJson');
+
+            syncButton.addEventListener('click', async () => {
+                try {
+                    // Update UI for loading state
+                    syncButton.disabled = true;
+                    status.textContent = 'Syncing contacts... This may take a moment.';
+                    status.className = 'loading';
+                    status.style.display = 'block';
+                    results.style.display = 'none';
+
+                    const response = await fetch('/contacts/sync');
+                    
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    status.textContent = 'Contacts synced successfully!';
+                    status.className = 'success';
+                    
+                    resultsJson.textContent = JSON.stringify(data, null, 2);
+                    results.style.display = 'block';
+                } catch (error) {
+                    status.textContent = `Failed to sync contacts: ${error.message}`;
+                    status.className = 'error';
+                } finally {
+                    syncButton.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
