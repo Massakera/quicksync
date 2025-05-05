@@ -26,18 +26,18 @@ app.add_middleware(
 
 app.include_router(contacts_router)
 
-static_dir = os.path.join(Path(__file__).parent.parent.parent.parent, "static")
+static_dir = os.path.join(Path(__file__).parent.parent.parent, "static")
 
 if os.path.exists(static_dir):
-    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+    app.mount("/static", StaticFiles(directory=static_dir, html=True), name="static")
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def root():
     static_index = os.path.join(static_dir, "index.html")
     if os.path.exists(static_index):
         return FileResponse(static_index)
     return {
-        "message": "Welcome to QuickSync API",
+        "message": "Welcome to QuickSync API. Static file directory might be misconfigured.",
         "docs": "/docs",
         "sync_endpoint": "/contacts/sync"
     }
