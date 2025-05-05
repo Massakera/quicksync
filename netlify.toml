@@ -1,5 +1,5 @@
 [build]
-  command = "pip install -e ."
+  command = "pip install ."
   publish = "public"
 
 [build.environment]
