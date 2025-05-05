@@ -48,6 +48,6 @@ coverage.xml
 *.swp
 *.swo
 
-requirements.txt
 # Local Netlify folder
 .netlify
+.vercel
