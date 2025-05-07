@@ -63,8 +63,23 @@ Response format:
 
 ## Testing
 
-Run tests with pytest:
+1.  **Set up your environment and install dependencies:**
 
-```bash
-pytest
-```
+    Ensure you have activated your virtual environment (e.g., `source .venv/bin/activate`) and installed the project in editable mode as described in the "Installation" section.
+
+2.  **Install test-specific dependencies:**
+
+    The tests require `pytest` and `pytest-asyncio`. If they were not installed as part of the main dependencies, you can install them directly:
+
+    ```bash
+    uv pip install pytest pytest-asyncio
+    ```
+
+3.  **Run tests:**
+
+    From the project root directory, execute:
+
+    ```bash
+    PYTHONPATH=. pytest
+    ```
+    The `PYTHONPATH=.` part ensures that Python can correctly locate your `quicksync` package during test collection.

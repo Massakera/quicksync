@@ -23,18 +23,28 @@ def mock_mailchimp_client():
 async def test_get_or_create_list_existing(mock_mailchimp_client):
     client, mock_client = mock_mailchimp_client
     
+    existing_list_id = "test_list_id_to_be_deleted"
+    newly_created_list_id = "newly_created_list_id_after_delete"
+
     mock_client.lists.get_all_lists.return_value = {
         "lists": [
-            {"id": "test_list_id", "name": "Enzo Massaki Ito"},
+            {"id": existing_list_id, "name": "Enzo Massaki Ito"},
             {"id": "other_list_id", "name": "Other List"},
         ]
     }
     
-    list_id = await client.get_or_create_list()
+    mock_client.lists.delete_list = MagicMock()
     
-    assert list_id == "test_list_id"
-    assert client.list_id == "test_list_id"
-    mock_client.lists.create_list.assert_not_called()
+    mock_client.lists.create_list.return_value = {"id": newly_created_list_id}
+    
+    list_id_from_method = await client.get_or_create_list()
+    
+    mock_client.lists.get_all_lists.assert_called_once()
+    mock_client.lists.delete_list.assert_called_once_with(existing_list_id)
+    mock_client.lists.create_list.assert_called_once() 
+    
+    assert list_id_from_method == newly_created_list_id
+    assert client.list_id == newly_created_list_id
 
 
 @pytest.mark.asyncio
