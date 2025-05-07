@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, patch, MagicMock
 
 from quicksync.src.clients.mockapi import MockAPIClient
 
@@ -13,7 +13,7 @@ async def test_get_contacts():
     
     mock_response = AsyncMock()
     mock_response.json.return_value = mock_contacts
-    mock_response.raise_for_status = AsyncMock()
+    mock_response.raise_for_status = MagicMock()
     
     with patch("httpx.AsyncClient.get", return_value=mock_response):
         client = MockAPIClient()

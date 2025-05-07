@@ -12,9 +12,9 @@ class MockAPIClient:
     async def get_contacts(self) -> List[Contact]:
         async with httpx.AsyncClient() as client:
             response = await client.get(self.contacts_url)
-            await response.raise_for_status()
+            response.raise_for_status()
             
-            contacts_data = await response.json()
+            contacts_data = response.json()
             return [
                 Contact(
                     firstName=contact.get("firstName", ""),
