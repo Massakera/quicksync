@@ -2,6 +2,8 @@
 
 A tool that syncs contacts from MockAPI to Mailchimp.
 
+Video explaining: https://www.loom.com/share/57845be278d2449c91208499bd910765?sid=dc0ad6f2-aa91-4acc-972a-d94363e8fcfb
+
 ## Features
 
 - Fetches contacts from MockAPI (https://challenge.trio.dev/api/v1/contacts)
