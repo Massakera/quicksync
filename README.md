@@ -63,6 +63,8 @@ Response format:
 
 ## Testing
 
+0. ### Prod app: https://quicksync-bay.vercel.app/
+
 1.  **Set up your environment and install dependencies:**
 
     Ensure you have activated your virtual environment (e.g., `source .venv/bin/activate`) and installed the project in editable mode as described in the "Installation" section.
